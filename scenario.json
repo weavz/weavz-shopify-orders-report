@@ -1,0 +1,101 @@
+{
+  "id": "shopify-orders-report",
+  "title": "Shopify Orders Report",
+  "prompt": "Summarize recent orders for the selected customer, separating open, closed, and canceled orders in the returned sample.",
+  "instructions": "Read only the selected customer’s bounded order page and status filter. Report only what the returned order records show; do not infer store-wide sales or customer lifetime value. Do not create, cancel, close, fulfill, or update orders, inventory, or customer data. Treat currency and fulfillment facts as synthetic.",
+  "fixture_summary": "Synthetic Shopify customer order page contains four orders: two open, one closed, and one canceled.",
+  "inputs": {
+    "customer_id": "customer-demo-104",
+    "status": "any",
+    "limit": 4
+  },
+  "steps": [
+    {
+      "id": "list_customer_orders",
+      "alias": "orders",
+      "integration": "shopify",
+      "action": "get_customer_orders",
+      "tool": "orders__get_customer_orders",
+      "arguments": {
+        "customer_id": "customer-demo-104",
+        "status": "any",
+        "limit": 4
+      },
+      "records": [
+        {
+          "id": "shop-order-701",
+          "app": "Shopify",
+          "title": "Order #701 / desk setup",
+          "detail": "Synthetic order: open, fulfillment pending, USD 148.00.",
+          "url": "https://example.com/records/shop-order-701",
+          "order_id": "shop-order-701",
+          "status": "open",
+          "financial_status": "paid",
+          "fulfillment_status": "unfulfilled",
+          "total_usd": 148
+        },
+        {
+          "id": "shop-order-702",
+          "app": "Shopify",
+          "title": "Order #702 / cable kit",
+          "detail": "Synthetic order: closed and fulfilled, USD 32.00.",
+          "url": "https://example.com/records/shop-order-702",
+          "order_id": "shop-order-702",
+          "status": "closed",
+          "financial_status": "paid",
+          "fulfillment_status": "fulfilled",
+          "total_usd": 32
+        },
+        {
+          "id": "shop-order-703",
+          "app": "Shopify",
+          "title": "Order #703 / monitor arm",
+          "detail": "Synthetic order: open, fulfillment pending, USD 89.00.",
+          "url": "https://example.com/records/shop-order-703",
+          "order_id": "shop-order-703",
+          "status": "open",
+          "financial_status": "paid",
+          "fulfillment_status": "unfulfilled",
+          "total_usd": 89
+        },
+        {
+          "id": "shop-order-704",
+          "app": "Shopify",
+          "title": "Order #704 / adapter",
+          "detail": "Synthetic order: canceled, USD 18.00.",
+          "url": "https://example.com/records/shop-order-704",
+          "order_id": "shop-order-704",
+          "status": "cancelled",
+          "financial_status": "refunded",
+          "fulfillment_status": "unfulfilled",
+          "total_usd": 18
+        }
+      ]
+    }
+  ],
+  "metrics": [
+    {
+      "name": "sampled_customer_orders",
+      "op": "count"
+    },
+    {
+      "name": "open_orders",
+      "op": "count",
+      "where": {
+        "status": "open"
+      }
+    },
+    {
+      "name": "canceled_orders",
+      "op": "count",
+      "where": {
+        "status": "cancelled"
+      }
+    }
+  ],
+  "expected_metrics": {
+    "sampled_customer_orders": 4,
+    "open_orders": 2,
+    "canceled_orders": 1
+  }
+}
